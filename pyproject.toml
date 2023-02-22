@@ -9,6 +9,8 @@ authors = [
     { name = "liketapi", email = "seryumed@gmail.com" }
 ]
 keywords = [
+    "asyncio",
+    "telegram",
     "app",
     "events",
     "events-library",
