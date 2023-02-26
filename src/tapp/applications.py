@@ -1,7 +1,7 @@
 from typing import Any, Callable, Coroutine, Dict, Optional, Sequence, Type
 
 from .filters import Filter
-from .middleware import BaseMiddleware, ExceptionMiddleware
+from .middleware import BaseMiddleware
 from .routing import Route, Router
 from .types import Decorated
 
@@ -31,7 +31,6 @@ class TApp:
             outer_middlewares=outer_middlewares,
             exception_handlers=exception_handlers,
         )
-        self.add_outer_middleware(ExceptionMiddleware(self.router))
 
     async def __call__(self, method: str, update: Any, **kwargs: Any) -> None:
         async def wrap(event: Any, **data: Any) -> None:

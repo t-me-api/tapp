@@ -5,6 +5,10 @@ from typing import Any, Awaitable, Callable, Dict
 
 
 class BaseMiddleware(abc.ABC):
+    """
+    Base class for writing middleware.
+    """
+
     @abc.abstractmethod
     async def __call__(
         self,

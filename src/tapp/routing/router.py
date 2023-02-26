@@ -16,7 +16,7 @@ from ..anyio import as_async
 from ..enums import Match
 from ..filters import Filter
 from ..logger import logger
-from ..middleware import BaseMiddleware, MiddlewareManager
+from ..middleware import BaseMiddleware, ExceptionMiddleware, MiddlewareManager
 from ..types import Decorated
 from .route import Route
 
@@ -41,7 +41,6 @@ class Router:
         self.routes = [] if routes is None else list(routes)
         self.on_startup = [] if on_startup is None else list(on_startup)
         self.on_shutdown = [] if on_shutdown is None else list(on_shutdown)
-        self._started = False
         self.middlewares = MiddlewareManager(middlewares)
         self.outer_middlewares = MiddlewareManager(outer_middlewares)
         self.route_class = route_class
@@ -51,18 +50,34 @@ class Router:
         ] = (
             {} if exception_handlers is None else dict(exception_handlers)
         )
+        self.add_outer_middleware(ExceptionMiddleware(self))
 
     async def startup(self) -> None:
+        """
+        Emit startup events.
+        """
+
         for startup in self.on_startup:
             await as_async(startup)
         self._started = True
 
     async def shutdown(self) -> None:
+        """
+        Emit shutdown events.
+        """
+
         for shutdown in self.on_shutdown:
             await as_async(shutdown)
         self._started = False
 
     async def lifespan(self) -> None:
+        """
+        Makes a lifespan events.
+        """
+
+        if not hasattr(self, "_started"):
+            self._started = False
+
         if self._started:
             await self.shutdown()
             return
@@ -91,6 +106,8 @@ class Router:
             self.add_middleware(middleware=middleware)
         for outer_middleware in router.outer_middlewares.copy():
             self.add_outer_middleware(outer_middleware=outer_middleware)
+        for exception, endpoint in router.exception_handlers.items():
+            self.add_exception_handler(exception=exception, endpoint=endpoint)
         for route in router.routes:
             self.add_route(
                 endpoint=route.endpoint,

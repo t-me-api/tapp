@@ -9,6 +9,13 @@ import anyio
 
 
 def isasynccallable(__object: Any) -> bool:
+    """
+    Checks is :parameter:`__object` async callable.
+
+    :param __object: python object
+    :return: is async callable
+    """
+
     while isinstance(__object, functools.partial):
         __object = __object.func
 
@@ -32,6 +39,16 @@ async def as_async(
     *args: _P.args,
     **kwargs: _P.kwargs,
 ) -> _RT:
+    """
+    Calls function as async mode. If function is async nothing to here.
+
+    :param function: function to be called
+    :param args: args to be passed in function
+    :param kwargs: kwargs to be passed in function
+
+    :return: function result
+    """
+
     function = inspect.unwrap(function)
     _s = inspect.getfullargspec(function)
     function = functools.partial(function, *args, **_prepare_kwargs(_s, kwargs))

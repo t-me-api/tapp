@@ -1,19 +1,14 @@
 from __future__ import annotations
 
 import abc
-import typing
+from typing import Any, Dict, Union
 
 
 class Filter(abc.ABC):
-    @abc.abstractmethod
-    async def __call__(
-        self, *args: typing.Any, **kwargs: typing.Any
-    ) -> typing.Union[bool, typing.Dict[str, typing.Any]]:
-        ...
+    """
+    Class to register own filters.
+    """
 
-    def __await__(
-        self,
-    ) -> typing.Callable[
-        ..., typing.Awaitable[typing.Union[bool, typing.Dict[str, typing.Any]]]
-    ]:  # pragma: no cover
-        return self.__call__
+    @abc.abstractmethod
+    async def __call__(self, *args: Any, **kwargs: Any) -> Union[bool, Dict[str, Any]]:
+        ...

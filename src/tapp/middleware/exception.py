@@ -10,10 +10,21 @@ if TYPE_CHECKING:
 
 
 class ExceptionMiddleware(abc.ABC):
+    """
+    Middleware for catching exceptions.
+    """
+
     def __init__(self, router: Router) -> None:
         self.router = router
 
     def _lookup_exception_handler(self, exception: Exception) -> Optional[Callable[..., Any]]:
+        """
+        Finds the handler for the exception among the registered ones.
+
+        :param exception: to find handler
+        :return: exception handler if registered
+        """
+
         for cls in type(exception).__mro__:
             if cls in self.router.exception_handlers:
                 return self.router.exception_handlers[cls]
@@ -25,6 +36,10 @@ class ExceptionMiddleware(abc.ABC):
         event: Any,
         data: Dict[str, Any],
     ) -> Any:
+        """
+        Handles errors.
+        """
+
         try:
             return await route(event, data)
         except Exception as e:

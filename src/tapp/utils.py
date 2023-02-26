@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from magic_filter import MagicFilter
 
 from .filters import Filter
