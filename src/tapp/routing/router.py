@@ -27,8 +27,8 @@ class Router:
         routes: Optional[Sequence[Route]] = None,
         on_startup: Optional[Sequence[Callable[..., Any]]] = None,
         on_shutdown: Optional[Sequence[Callable[..., Any]]] = None,
-        middlewares: Optional[Sequence[BaseMiddleware]] = None,
-        outer_middlewares: Optional[Sequence[BaseMiddleware]] = None,
+        middleware: Optional[Sequence[BaseMiddleware]] = None,
+        outer_middleware: Optional[Sequence[BaseMiddleware]] = None,
         route_class: Type[Route] = Route,
         *,
         exception_handlers: Optional[
@@ -41,8 +41,8 @@ class Router:
         self.routes = [] if routes is None else list(routes)
         self.on_startup = [] if on_startup is None else list(on_startup)
         self.on_shutdown = [] if on_shutdown is None else list(on_shutdown)
-        self.middlewares = MiddlewareManager(middlewares)
-        self.outer_middlewares = MiddlewareManager(outer_middlewares)
+        self.middleware = MiddlewareManager(middleware)
+        self.outer_middleware = MiddlewareManager(outer_middleware)
         self.route_class = route_class
         self.exception_handlers: Dict[
             Any,
@@ -92,7 +92,7 @@ class Router:
             match, data = await route.matches(update, method=method, **kwargs)
             if match == Match.MATCH:
                 kwargs.update(data, route=route)
-                wrapped = self.middlewares.wrap(
+                wrapped = self.middleware.wrap(
                     route=route.handle,
                 )
                 await wrapped(update, kwargs)
@@ -102,9 +102,9 @@ class Router:
         )
 
     def include_router(self, router: Router) -> None:
-        for middleware in router.middlewares.copy():
+        for middleware in router.middleware.copy():
             self.add_middleware(middleware=middleware)
-        for outer_middleware in router.outer_middlewares.copy():
+        for outer_middleware in router.outer_middleware.copy():
             self.add_outer_middleware(outer_middleware=outer_middleware)
         for exception, endpoint in router.exception_handlers.items():
             self.add_exception_handler(exception=exception, endpoint=endpoint)
@@ -121,10 +121,10 @@ class Router:
             self.add_lifespan(method="shutdown", endpoint=shutdown)
 
     def add_middleware(self, middleware: BaseMiddleware) -> None:
-        self.middlewares.add_middleware(middleware=middleware)
+        self.middleware.add_middleware(middleware=middleware)
 
     def add_outer_middleware(self, outer_middleware: BaseMiddleware) -> None:
-        self.outer_middlewares.add_middleware(outer_middleware)
+        self.outer_middleware.add_middleware(outer_middleware)
 
     def add_route(
         self,

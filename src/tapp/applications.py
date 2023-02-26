@@ -14,8 +14,8 @@ class TApp:
         routes: Optional[Sequence[Route]] = None,
         on_startup: Optional[Sequence[Callable[..., Any]]] = None,
         on_shutdown: Optional[Sequence[Callable[..., Any]]] = None,
-        middlewares: Optional[Sequence[BaseMiddleware]] = None,
-        outer_middlewares: Optional[Sequence[BaseMiddleware]] = None,
+        middleware: Optional[Sequence[BaseMiddleware]] = None,
+        outer_middleware: Optional[Sequence[BaseMiddleware]] = None,
         exception_handlers: Optional[
             Dict[
                 Type[Exception],
@@ -27,8 +27,8 @@ class TApp:
             routes=routes,
             on_startup=on_startup,
             on_shutdown=on_shutdown,
-            middlewares=middlewares,
-            outer_middlewares=outer_middlewares,
+            middleware=middleware,
+            outer_middleware=outer_middleware,
             exception_handlers=exception_handlers,
         )
 
