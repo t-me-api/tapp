@@ -36,7 +36,7 @@ class TApp:
         async def wrap(event: Any, **data: Any) -> None:
             await self.router(method=method, update=event, **data)
 
-        wrapped = self.router.outer_middlewares.wrap(wrap)
+        wrapped = self.router.outer_middleware.wrap(wrap)
         await wrapped(update, kwargs)
 
     def include_router(self, router: Router) -> None:

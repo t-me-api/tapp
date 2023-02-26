@@ -1,25 +1,4 @@
-# tapp
-
-Asyncio library for creating applications for
-handling events from the user.
-
-Documentation:
-+ [English](docs/index.md)
-
-## Quick start
-
-Install:
-
-```shell
-pip install tapp
-```
-
-Example:
-
-```python
 # !/usr/bin/python
-
-# content examples/some.py
 
 import asyncio
 
@@ -39,4 +18,3 @@ async def main() -> None:
 
 if __name__ == "__main__":
     asyncio.run(main())
-```
