@@ -36,10 +36,6 @@ dev = [
     "ruff~=0.0.246"
 ]
 
-[project.urls]
-"Homepage" = "https://github.com/liketapi/tapp"
-"Bug Tracker" = "https://github.com/liketapi/tapp/issues"
-
 [tool.ruff]
 line-length = 99
 select = [
