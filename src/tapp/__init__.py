@@ -1,8 +1,8 @@
 from .applications import TApp
-from .routing import Router
+from .routing import TRouter
 
-__version__ = "1.1"
+__version__ = "1.2"
 __all__ = (
     "TApp",
-    "Router",
+    "TRouter",
 )

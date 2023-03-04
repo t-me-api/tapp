@@ -9,7 +9,7 @@ from ..filters import Filter
 from ..utils import transform_filter
 
 
-class BaseRoute(abc.ABC):
+class BaseTRoute(abc.ABC):
     @abc.abstractmethod
     async def matches(self, *args: Any, **kwargs: Any) -> Tuple[Match, Dict[str, Any]]:
         ...
@@ -19,7 +19,7 @@ class BaseRoute(abc.ABC):
         ...
 
 
-class Route(BaseRoute):
+class TRoute(BaseTRoute):
     def __init__(
         self,
         endpoint: Callable[..., Any],

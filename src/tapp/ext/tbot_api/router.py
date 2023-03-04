@@ -1,133 +1,109 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Coroutine, Dict, Optional, Sequence, Type
+from typing import Any, Callable, Dict, Optional
+
+from tbot_api.enums import UpdateType
 
 from ...filters import Filter
-from ...middleware import BaseMiddleware
-from ...routing import Route, Router
+from ...routing import TRouter as OriginalTRouter
 from ...types import Decorated
 
 
-class TelegramRouter(Router):
-    def __init__(
-        self,
-        routes: Optional[Sequence[Route]] = None,
-        on_startup: Optional[Sequence[Callable[..., Any]]] = None,
-        on_shutdown: Optional[Sequence[Callable[..., Any]]] = None,
-        middleware: Optional[Sequence[BaseMiddleware]] = None,
-        outer_middleware: Optional[Sequence[BaseMiddleware]] = None,
-        route_class: Type[Route] = Route,
-        exception_handlers: Optional[
-            Dict[
-                Type[Exception],
-                Callable[[Any, Exception], Coroutine[Any, Any, Any]],
-            ]
-        ] = None,
-    ) -> None:
-        super(TelegramRouter, self).__init__(
-            routes=routes,
-            on_startup=on_startup,
-            on_shutdown=on_shutdown,
-            middleware=middleware,
-            outer_middleware=outer_middleware,
-            route_class=route_class,
-            exception_handlers=exception_handlers,
-        )
-
+class TRouter(OriginalTRouter):
     def message(
         self,
         *filters: Filter,
         flags: Optional[Dict[str, Any]] = None,
     ) -> Callable[[Decorated], Decorated]:
-        return self.route(*filters, method="message", flags=flags)
+        return self.route(*filters, method=UpdateType.MESSAGE, flags=flags)
 
     def edited_message(
         self,
         *filters: Filter,
         flags: Optional[Dict[str, Any]] = None,
     ) -> Callable[[Decorated], Decorated]:
-        return self.route(*filters, method="edited_message", flags=flags)
+        return self.route(*filters, method=UpdateType.EDITED_MESSAGE, flags=flags)
 
     def channel_post(
         self,
         *filters: Filter,
         flags: Optional[Dict[str, Any]] = None,
     ) -> Callable[[Decorated], Decorated]:
-        return self.route(*filters, method="channel_post", flags=flags)
+        return self.route(*filters, method=UpdateType.CHANNEL_POST, flags=flags)
 
     def edited_channel_post(
         self,
         *filters: Filter,
         flags: Optional[Dict[str, Any]] = None,
     ) -> Callable[[Decorated], Decorated]:
-        return self.route(*filters, method="edited_channel_post", flags=flags)
+        return self.route(*filters, method=UpdateType.EDITED_CHANNEL_POST, flags=flags)
 
     def inline_query(
         self,
         *filters: Filter,
         flags: Optional[Dict[str, Any]] = None,
     ) -> Callable[[Decorated], Decorated]:
-        return self.route(*filters, method="inline_query", flags=flags)
+        return self.route(*filters, method=UpdateType.INLINE_QUERY, flags=flags)
 
     def chosen_inline_result(
         self,
         *filters: Filter,
         flags: Optional[Dict[str, Any]] = None,
     ) -> Callable[[Decorated], Decorated]:
-        return self.route(*filters, method="chosen_inline_result", flags=flags)
+        return self.route(*filters, method=UpdateType.CHOSEN_INLINE_RESULT, flags=flags)
 
     def callback_query(
         self,
         *filters: Filter,
         flags: Optional[Dict[str, Any]] = None,
     ) -> Callable[[Decorated], Decorated]:
-        return self.route(*filters, method="callback_query", flags=flags)
+        return self.route(*filters, method=UpdateType.CALLBACK_QUERY, flags=flags)
 
     def shipping_query(
         self,
         *filters: Filter,
         flags: Optional[Dict[str, Any]] = None,
     ) -> Callable[[Decorated], Decorated]:
-        return self.route(*filters, method="shipping_query", flags=flags)
+        return self.route(*filters, method=UpdateType.SHIPPING_QUERY, flags=flags)
 
     def pre_checkout_query(
         self,
         *filters: Filter,
         flags: Optional[Dict[str, Any]] = None,
     ) -> Callable[[Decorated], Decorated]:
-        return self.route(*filters, method="pre_checkout_query", flags=flags)
+        return self.route(*filters, method=UpdateType.PRE_CHECKOUT_QUERY, flags=flags)
 
     def poll(
         self,
         *filters: Filter,
         flags: Optional[Dict[str, Any]] = None,
     ) -> Callable[[Decorated], Decorated]:
-        return self.route(*filters, method="poll", flags=flags)
+        return self.route(*filters, method=UpdateType.POLL, flags=flags)
 
     def poll_answer(
         self,
         *filters: Filter,
         flags: Optional[Dict[str, Any]] = None,
     ) -> Callable[[Decorated], Decorated]:
-        return self.route(*filters, method="poll_answer", flags=flags)
+        return self.route(*filters, method=UpdateType.POLL_ANSWER, flags=flags)
 
     def my_chat_member(
         self,
         *filters: Filter,
         flags: Optional[Dict[str, Any]] = None,
     ) -> Callable[[Decorated], Decorated]:
-        return self.route(*filters, method="my_chat_member", flags=flags)
+        return self.route(*filters, method=UpdateType.MY_CHAT_MEMBER, flags=flags)
 
     def chat_member(
         self,
         *filters: Filter,
         flags: Optional[Dict[str, Any]] = None,
     ) -> Callable[[Decorated], Decorated]:
-        return self.route(*filters, method="chat_member", flags=flags)
+        return self.route(*filters, method=UpdateType.CHAT_MEMBER, flags=flags)
 
     def chat_join_request(
         self,
         *filters: Filter,
         flags: Optional[Dict[str, Any]] = None,
     ) -> Callable[[Decorated], Decorated]:
-        return self.route(*filters, method="chat_join_request", flags=flags)
+        return self.route(*filters, method=UpdateType.CHAT_JOIN_REQUEST, flags=flags)

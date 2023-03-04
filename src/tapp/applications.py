@@ -2,16 +2,16 @@ from typing import Any, Callable, Coroutine, Dict, Optional, Sequence, Type
 
 from .filters import Filter
 from .middleware import BaseMiddleware
-from .routing import Route, Router
+from .routing import TRoute, TRouter
 from .types import Decorated
 
 
 class TApp:
     def __init__(
         self,
-        router_class: Type[Router] = Router,
+        router_class: Type[TRouter] = TRouter,
         *,
-        routes: Optional[Sequence[Route]] = None,
+        routes: Optional[Sequence[TRoute]] = None,
         on_startup: Optional[Sequence[Callable[..., Any]]] = None,
         on_shutdown: Optional[Sequence[Callable[..., Any]]] = None,
         middleware: Optional[Sequence[BaseMiddleware]] = None,
@@ -32,14 +32,26 @@ class TApp:
             exception_handlers=exception_handlers,
         )
 
-    async def __call__(self, method: str, update: Any, **kwargs: Any) -> None:
-        async def wrap(event: Any, **data: Any) -> None:
-            await self.router(method=method, update=event, **data)
+    async def __call__(
+        self,
+        method: str,
+        original_update: Optional[Any] = None,
+        event: Optional[Any] = None,
+        **kwargs: Any,
+    ) -> None:
+        if method == "lifespan":
+            await self.router.lifespan()
+            return
+
+        kwargs["original_update"] = original_update
+
+        async def wrap(update: Any, **data: Any) -> None:
+            await self.router(method=method, update=update, **data)
 
         wrapped = self.router.outer_middleware.wrap(wrap)
-        await wrapped(update, kwargs)
+        await wrapped(event, kwargs)
 
-    def include_router(self, router: Router) -> None:
+    def include_router(self, router: TRouter) -> None:
         self.router.include_router(router)
 
     def add_middleware(self, middleware: BaseMiddleware) -> None:

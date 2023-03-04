@@ -1,8 +1,8 @@
-from .route import BaseRoute, Route
-from .router import Router
+from .route import BaseTRoute, TRoute
+from .router import TRouter
 
 __all__ = (
-    "BaseRoute",
-    "Route",
-    "Router",
+    "BaseTRoute",
+    "TRoute",
+    "TRouter",
 )

@@ -1,20 +1,19 @@
-from __future__ import annotations
-
 from typing import Any, Callable, Coroutine, Dict, Optional, Sequence, Type
 
-from ...applications import TApp
+from ...applications import TApp as OriginalTApp
 from ...filters import Filter
 from ...middleware import BaseMiddleware
-from ...routing import Route
+from ...routing import TRoute
 from ...types import Decorated
-from .router import TelegramRouter
+from .middleware import ContextMiddleware
+from .router import TRouter
 
 
-class TelegramApp(TApp):
+class TApp(OriginalTApp):
     def __init__(
         self,
         *,
-        routes: Optional[Sequence[Route]] = None,
+        routes: Optional[Sequence[TRoute]] = None,
         on_startup: Optional[Sequence[Callable[..., Any]]] = None,
         on_shutdown: Optional[Sequence[Callable[..., Any]]] = None,
         middleware: Optional[Sequence[BaseMiddleware]] = None,
@@ -26,8 +25,8 @@ class TelegramApp(TApp):
             ]
         ] = None,
     ) -> None:
-        super(TelegramApp, self).__init__(
-            TelegramRouter,
+        super(TApp, self).__init__(
+            TRouter,
             routes=routes,
             on_startup=on_startup,
             on_shutdown=on_shutdown,
@@ -35,6 +34,8 @@ class TelegramApp(TApp):
             outer_middleware=outer_middleware,
             exception_handlers=exception_handlers,
         )
+
+        self.add_outer_middleware(ContextMiddleware())
 
     def message(
         self,

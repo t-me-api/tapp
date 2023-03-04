@@ -18,19 +18,19 @@ from ..filters import Filter
 from ..logger import logger
 from ..middleware import BaseMiddleware, ExceptionMiddleware, MiddlewareManager
 from ..types import Decorated
-from .route import Route
+from .route import TRoute
 
 
-class Router:
+class TRouter:
     def __init__(
         self,
-        routes: Optional[Sequence[Route]] = None,
+        *,
+        routes: Optional[Sequence[TRoute]] = None,
         on_startup: Optional[Sequence[Callable[..., Any]]] = None,
         on_shutdown: Optional[Sequence[Callable[..., Any]]] = None,
         middleware: Optional[Sequence[BaseMiddleware]] = None,
         outer_middleware: Optional[Sequence[BaseMiddleware]] = None,
-        route_class: Type[Route] = Route,
-        *,
+        route_class: Type[TRoute] = TRoute,
         exception_handlers: Optional[
             Dict[
                 Type[Exception],
@@ -84,10 +84,6 @@ class Router:
         await self.startup()
 
     async def __call__(self, method: str, update: Any, **kwargs: Any) -> None:
-        if method == "lifespan":
-            await self.lifespan()
-            return
-
         for route in self.routes:
             match, data = await route.matches(update, method=method, **kwargs)
             if match == Match.MATCH:
@@ -101,7 +97,7 @@ class Router:
             % (method, Match.NONE, "unhandled"),
         )
 
-    def include_router(self, router: Router) -> None:
+    def include_router(self, router: TRouter) -> None:
         for middleware in router.middleware.copy():
             self.add_middleware(middleware=middleware)
         for outer_middleware in router.outer_middleware.copy():
@@ -159,7 +155,7 @@ class Router:
         if method == "startup":
             self.on_startup.append(endpoint)
         else:
-            self.on_shutdown.append(method)
+            self.on_shutdown.append(endpoint)
 
     def on_lifespan(self, method: str) -> Callable[[Decorated], Decorated]:
         def decorator(endpoint: Decorated) -> Decorated:

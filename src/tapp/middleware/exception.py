@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, Awaitable, Callable, Dict, Optional
 from ..anyio import as_async
 
 if TYPE_CHECKING:
-    from ..routing import Router
+    from ..routing import TRouter
 
 
 class ExceptionMiddleware(abc.ABC):
@@ -14,7 +14,7 @@ class ExceptionMiddleware(abc.ABC):
     Middleware for catching exceptions.
     """
 
-    def __init__(self, router: Router) -> None:
+    def __init__(self, router: TRouter) -> None:
         self.router = router
 
     def _lookup_exception_handler(self, exception: Exception) -> Optional[Callable[..., Any]]:
